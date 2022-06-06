@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../dummy_data.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/meal_provider.dart';
 import '../widgets/categories_item.dart';
 
 class CategoriesScreen extends StatelessWidget {
@@ -7,19 +9,18 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GridView(
-        padding: const EdgeInsets.all(15.0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 100,
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
-        ),
-        children: DUMMY_CATEGORIES.map((category) {
-          return CategoriesItem(category.id, category.title, category.color);
-        }).toList(),
+    return GridView(
+      padding: const EdgeInsets.all(15.0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        mainAxisExtent: 100,
       ),
+      children: Provider.of<MealProvider>(context).allAvailableCategories
+          .map((category) =>
+              CategoriesItem(category.id, category.title, category.color))
+          .toList(),
     );
   }
 }

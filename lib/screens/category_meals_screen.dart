@@ -1,42 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/meal.dart';
+import '../models/tools/themes_data.dart';
+import '../providers/meal_provider.dart';
 import '../widgets/meal_item.dart';
 
 class CategoryMealsScreen extends StatelessWidget {
-  static const String routeName = '/categories_meals';
+  final String _categoryTitle;
 
-  final List listMeals;
-
-  const CategoryMealsScreen({
+  const CategoryMealsScreen(
+    this._categoryTitle, {
     Key? key,
-    required this.listMeals,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final arg =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-    final categoryId = arg['id'].toString();
-    final categoryTitle = arg['title'].toString();
-    final meals = listMeals.where((meal) {
-      return meal.categories.contains(categoryId);
-    }).toList();
-
+    List<Meal> _listSpecificMeals =
+        Provider.of<MealProvider>(context).specificMeals;
+    ////////////////////////////
     return Scaffold(
       appBar: AppBar(
-        title: Text(categoryTitle),
+        title: Text(_categoryTitle),
       ),
-      body: ListView.builder(
-        itemBuilder: (con, index) {
-          return MealItem(
-            imageUrl: meals[index].imageUrl,
-            title: meals[index].title,
-            duration: meals[index].duration,
-            complexity: meals[index].complexity,
-            affordability: meals[index].affordability,
-            id: meals[index].id,
-          );
+      body: GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        itemCount: _listSpecificMeals.length,
+        itemBuilder: (_, index) {
+          return MealItem(_listSpecificMeals[index]);
         },
-        itemCount: meals.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount:
+              ThemesData.orientation(context) == Orientation.portrait
+                  ? 1
+                  : (ThemesData.screenWidth(context) / 2 < 280 ? 1 : 2),
+          mainAxisExtent: 205, //height
+        ),
       ),
     );
   }

@@ -1,30 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_meal_app/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
+
 import '../models/meal.dart';
 import '../screens/meal_detail_screen.dart';
 
 class MealItem extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final int duration;
-  final Complexity complexity;
-  final Affordability affordability;
-  final String id;
-  final bool checkScreen; //if true --> mealItem used for category_meals_screen
-  //if false --> mealItem used for favorite_screen
+  final Meal _meal;
 
-  const MealItem({
+  const MealItem(
+    this._meal, {
     Key? key,
-    required this.imageUrl,
-    required this.title,
-    required this.duration,
-    required this.complexity,
-    required this.affordability,
-    required this.id,
-    this.checkScreen = true,
   }) : super(key: key);
 
   String get complexityText {
-    switch (complexity) {
+    switch (_meal.complexity) {
       case Complexity.Simple:
         return 'Simple';
       case Complexity.Challenging:
@@ -37,7 +27,7 @@ class MealItem extends StatelessWidget {
   }
 
   String get affordabilityText {
-    switch (affordability) {
+    switch (_meal.affordability) {
       case Affordability.Affordable:
         return 'Affordable';
       case Affordability.Pricey:
@@ -49,113 +39,118 @@ class MealItem extends StatelessWidget {
     }
   }
 
-  void selectItem(BuildContext con) {
-    if (checkScreen) {
-      Navigator.of(con).pushNamed(
-        MealDetailScreen.routeName,
-        arguments: {
-          'id': id,
-          'screenType': false,
-        },
-      );
-    } else {
-      Navigator.of(con).pushReplacementNamed(
-        MealDetailScreen.routeName,
-        arguments: {
-          'id': id,
-          'screenType': true,
-        },
-      );
-    }
+  void selectedMeal(BuildContext con) {
+    Navigator.of(con).push(
+      MaterialPageRoute(builder: (_) => MealDetailScreen(_meal)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => selectItem(context),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        color: Colors.white,
-        margin: const EdgeInsets.all(15.0),
-        elevation: 4,
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(15.0),
-                    topRight: Radius.circular(15.0),
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                ////////////////////
-                Positioned(
-                  bottom: 15.0,
-                  right: 10.0,
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    width: 220.0,
-                    color: Colors.black45,
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0, left: 7.5, right: 7.5),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15.0),
+        onTap: () => selectedMeal(context),
+        child: Card(
+          color: Theme.of(context).canvasColor,
+          shadowColor: Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          margin: const EdgeInsets.all(0.0),
+          elevation: 3,
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      topRight: Radius.circular(15.0),
+                    ),
+                    child: Hero(
+                      tag: _meal.id,
+                      child: FadeInImage(
+                        fit: BoxFit.cover,
+                        height: 150,
+                        width: double.infinity,
+                        placeholder:
+                            const AssetImage('assets/images/mealLoading.png'),
+                        image: NetworkImage(_meal.imageUrl),
                       ),
-                      softWrap: true,
-                      overflow: TextOverflow.clip,
                     ),
                   ),
-                ),
-              ],
-            ),
-            /////////////////////////////////////////////
-            SizedBox(
-              height: 40,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.schedule_rounded),
-                      const SizedBox(
-                        width: 5,
+                  ////////////////////
+                  Positioned(
+                    bottom: 15.0,
+                    right: 10.0,
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      width: 220.0,
+                      color: Colors.black45,
+                      child: Text(
+                        _meal.title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.clip,
                       ),
-                      Text('$duration min'),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.work),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(complexityText),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.attach_money_outlined),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(affordabilityText),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            )
-          ],
+              /////////////////////////////////////////////
+              SizedBox(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    /////////////////////////////////////////////////////////
+                    rowIconText(
+                      context,
+                      Icons.schedule_rounded,
+                      '${_meal.duration} min',
+                    ),
+                    /////////////////////////////////////////////////////////
+                    rowIconText(
+                      context,
+                      Icons.work,
+                      complexityText,
+                    ),
+                    /////////////////////////////////////////////////////////
+                    rowIconText(
+                      context,
+                      Icons.attach_money_outlined,
+                      affordabilityText,
+                    ),
+                    /////////////////////////////////////////////////////////
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Row rowIconText(BuildContext ctx, IconData iconData, String textName) {
+    return Row(
+      children: [
+        Icon(
+          iconData,
+          color: Provider.of<ThemeProvider>(ctx).getColor,
+          size: 20,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          textName,
+          style: Theme.of(ctx).textTheme.subtitle1,
+        ),
+      ],
     );
   }
 }

@@ -1,74 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/meal_provider.dart';
+import '../providers/theme_provider.dart';
 import '../screens/categories_screen.dart';
 import '../screens/favorites_screen.dart';
 import '../widgets/main_drawer.dart';
 
 class TabsScreen extends StatefulWidget {
-  final List favoriteMeals;
-  final int currentIndex;
-
-  const TabsScreen({
-    Key? key,
-    required this.favoriteMeals,
-    this.currentIndex = 0,
-  }) : super(key: key);
+  const TabsScreen({Key? key}) : super(key: key);
 
   @override
   State<TabsScreen> createState() => _TabsScreenState();
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-
-  int _currentIndex = 0;
-
-  List<Map<String, Object>> _pages = [];
   @override
   void initState() {
     super.initState();
-    _pages = [
-      {
-        'page': const CategoriesScreen(),
-        'title': 'Categories',
-      },
-      {
-        'page': Favorites(favorites: widget.favoriteMeals),
-        'title': 'Your Favorites',
-      },
-    ];
-    _currentIndex = widget.currentIndex;
+    //// Get Saved data from SharedPreferences for (MealProvider)
+    Provider.of<MealProvider>(context, listen: false)
+        .getSavedDataFromSharedPreferences();
+
+    //// Get Saved data from SharedPreferences for (ThemeProvider)
+    Provider.of<ThemeProvider>(context, listen: false)
+        .getSavedDataFromSharedPreferences();
   }
 
   @override
   Widget build(BuildContext context) {
+    int _currentIndex =
+        Provider.of<MealProvider>(context).currentIndex_tabScreen;
+    /////////////////////
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _pages[_currentIndex]['title'].toString(),
-        ),
+        title: Text(_currentIndex == 0 ? 'Categories' : 'Your Favorites'),
       ),
       //////////////////////////////////////////////////////////////////////////
-      body: _pages[_currentIndex]['page'] as Widget,
+      body: _currentIndex == 0
+          ? const CategoriesScreen()
+          : const FavoriteScreen(),
       //////////////////////////////////////////////////////////////////////////
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        items: [
+        currentIndex: _currentIndex,
+        items: const [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.category_outlined),
-            label: _pages[0]['title'].toString(),
+            icon: Icon(Icons.category_outlined),
+            label: 'Categories',
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.star_border_outlined),
-            label: _pages[1]['title'].toString(),
+            icon: Icon(Icons.star_border_outlined),
+            label: 'Your Favorites',
           ),
         ],
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white,
+        onTap: (_selectedIndex) =>
+            Provider.of<MealProvider>(context, listen: false)
+                .changeIndex(_selectedIndex),
       ),
       //////////////////////////////////////////////////////////////////////////
       drawer: const MainDrawer(),

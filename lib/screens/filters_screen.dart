@@ -1,139 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/meal_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/main_drawer.dart';
 
 class FiltersScreen extends StatefulWidget {
-  static const routeName = '/filters';
-
-  final Function saveFiltersData;
-  final Map<String, bool> savedFilters;
-
-  const FiltersScreen({
+  final bool _fromOnBoardingScreen;
+  const FiltersScreen([
+    this._fromOnBoardingScreen = false,
     Key? key,
-    required this.saveFiltersData,
-    required this.savedFilters,
-  }) : super(key: key);
+  ]) : super(key: key);
+
   @override
   State<FiltersScreen> createState() => _FiltersScreenState();
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  bool _glutenFree = false;
-  bool _lactoseFree = false;
-  bool _vegan = false;
-  bool _vegetarian = false;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _glutenFree = widget.savedFilters['gluten'] as bool;
-      _lactoseFree = widget.savedFilters['lactose'] as bool;
-      _vegan = widget.savedFilters['vegan'] as bool;
-      _vegetarian = widget.savedFilters['vegetarian'] as bool;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Map<String, bool> filters =
+        Provider.of<MealProvider>(context).saved_filters;
+    ////////////////
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Filters'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                Map<String, bool> _selectedFilters = {
-                  'gluten': _glutenFree,
-                  'lactose': _lactoseFree,
-                  'vegan': _vegan,
-                  'vegetarian': _vegetarian,
-                };
-                widget.saveFiltersData(_selectedFilters);
-              });
-            },
-            icon: const Icon(Icons.save_outlined),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
-              child: Text(
-                'Adjust your meal selection.',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+      //////////////////////
+      body: CustomScrollView(
+        slivers: [
+          if (widget._fromOnBoardingScreen == false)
+            const SliverAppBar(
+              pinned: true,
+              title: Text('Your Filters'),
             ),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                //////////////////////////////////////////
+                Container(
+                  padding: EdgeInsets.only(
+                    top: widget._fromOnBoardingScreen ? 65 : 15,
+                    bottom: 15.0,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Adjust your meal selection.',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                  ),
+                ),
                 ///////////////////////////////////////
-                buildSwitch(
+                switchListTile(
+                  context,
                   'Gluten-Free',
                   'Only include gluten-free meals',
-                  _glutenFree,
-                  (val) {
-                    setState(() {
-                      _glutenFree = val;
-                    });
-                  },
+                  'gluten',
+                  filters,
                 ),
                 ///////////////////////////////////////
-                buildSwitch(
+                switchListTile(
+                  context,
                   'Lactose-Free',
                   'Only include lactose-free meals',
-                  _lactoseFree,
-                  (val) {
-                    setState(() {
-                      _lactoseFree = val;
-                    });
-                  },
+                  'lactose',
+                  filters,
                 ),
                 ///////////////////////////////////////
-                buildSwitch(
+                switchListTile(
+                  context,
                   'Vegetarian',
                   'Only include vegetarian meals',
-                  _vegetarian,
-                  (val) {
-                    setState(() {
-                      _vegetarian = val;
-                    });
-                  },
+                  'vegetarian',
+                  filters,
                 ),
                 ///////////////////////////////////////
-                buildSwitch(
+                switchListTile(
+                  context,
                   'Vegan',
                   'Only include vegan meals',
-                  _vegan,
-                  (val) {
-                    setState(() {
-                      _vegan = val;
-                    });
-                  },
+                  'vegan',
+                  filters,
                 ),
+                ///////////////////////////////////////
+                if (widget._fromOnBoardingScreen) const SizedBox(height: 70),
               ],
             ),
           ),
         ],
       ),
-      drawer: const MainDrawer(),
+      ////////////////////
+      drawer: widget._fromOnBoardingScreen ? null : const MainDrawer(),
     );
   }
 
-  ///////////////////////////////////////////////////////////////////
-  SwitchListTile buildSwitch(
-    String _title,
-    String _description,
-    bool _currentVal,
-    Function(bool val)? _onChanged,
+  /////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  SwitchListTile switchListTile(
+    BuildContext ctx,
+    String title,
+    String subTitle,
+    String filterValue,
+    Map<String, bool> filter,
   ) {
     return SwitchListTile(
-      value: _currentVal,
-      onChanged: _onChanged,
-      title: Text(_title),
-      subtitle: Text(_description),
+      title: Text(title, style: Theme.of(ctx).textTheme.headline4),
+      subtitle: Text(subTitle, style: Theme.of(ctx).textTheme.subtitle1),
+      value: filter[filterValue]!,
+      onChanged: (_newVal) {
+        setState(() {
+          filter[filterValue] = _newVal;
+        });
+        Provider.of<MealProvider>(ctx, listen: false).updateFilters();
+      },
+      activeColor: Provider.of<ThemeProvider>(context).accentColor,
+      activeTrackColor:
+          Provider.of<ThemeProvider>(context).accentColor.withOpacity(0.4),
+      inactiveThumbColor: Colors.white.withOpacity(0.6),
+      inactiveTrackColor: Colors.grey.withOpacity(0.4),
     );
   }
 }

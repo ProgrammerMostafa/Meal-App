@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +11,10 @@ import '../screens/tabs_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //////////////////////////////////////////
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+    SystemUiOverlay.bottom, //This line is used for showing the bottom bar
+  ]);
   //////////////////////////////////////////
   SharedPreferences _prefs = await SharedPreferences.getInstance();
   Widget _homeScreen = _prefs.getBool('watch_onBoarding_screen') == null
@@ -28,7 +33,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   final Widget _homeScreen;
   const MyApp(
     this._homeScreen, {

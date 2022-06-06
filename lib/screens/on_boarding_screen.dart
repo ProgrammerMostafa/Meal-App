@@ -55,13 +55,18 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           //////////////////////////////////////////////////////////////
           Builder(
             builder: (ctx) => Align(
-              alignment: const Alignment(0, 0.82),
+              alignment: Alignment(
+                0,
+                ThemesData.orientation(ctx) == Orientation.portrait
+                    ? 0.85
+                    : 0.80,
+              ),
               child: ElevatedButton(
                 child: Text(
                   'GET STARTED',
                   style: TextStyle(
                     fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: useWhiteForeground(_primaryColor)
                         ? Colors.white
                         : Colors.black,
@@ -80,7 +85,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(_primaryColor),
                   fixedSize: MaterialStateProperty.all(
-                    Size(ThemesData.screenWidth(ctx) - 10, 30),
+                    Size(ThemesData.screenWidth(ctx) - 10, 40),
                   ),
                 ),
               ),
@@ -88,7 +93,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           ),
           //////////////////////////////////////////////////////////////
           Align(
-            alignment: const Alignment(0, 0.95),
+            alignment: const Alignment(0, 0.98),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -123,26 +128,26 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     );
   }
 }
-  Widget buildIndicator(
-    Color primaryColor,
-    Color accentColor,
-    int index,
-    int currentIndex,
-  ) {
-    return currentIndex == index
-        ? Icon(
-            Icons.star,
-            color: primaryColor,
-          )
-        : Container(
-            margin: const EdgeInsets.all(5),
-            width: 18,
-            height: 18,
-            decoration: BoxDecoration(
-              color: accentColor,
-              border: Border.all(color: Colors.grey),
-              shape: BoxShape.circle,
-            ),
-          );
-  }
 
+Widget buildIndicator(
+  Color primaryColor,
+  Color accentColor,
+  int index,
+  int currentIndex,
+) {
+  return currentIndex == index
+      ? Icon(
+          Icons.star,
+          color: primaryColor,
+        )
+      : Container(
+          margin: const EdgeInsets.all(5),
+          width: 18,
+          height: 18,
+          decoration: BoxDecoration(
+            color: accentColor,
+            border: Border.all(color: Colors.grey),
+            shape: BoxShape.circle,
+          ),
+        );
+}

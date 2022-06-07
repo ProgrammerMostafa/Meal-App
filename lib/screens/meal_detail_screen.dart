@@ -3,7 +3,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 
 import '../models/meal.dart';
-import '../models/tools/themes_data.dart';
+import '../tools/themes_data.dart';
 import '../providers/meal_provider.dart';
 import '../providers/theme_provider.dart';
 

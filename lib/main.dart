@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/tools/themes_data.dart';
+import '../tools/themes_data.dart';
 import '../providers/meal_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/on_boarding_screen.dart';
@@ -80,6 +80,12 @@ class MyApp extends StatelessWidget {
         radioTheme: ThemesData.radioThemeData(),
         ///////////////////////////////////////////////
         iconTheme: ThemesData.iconThemeData(primaryColor),
+        ///////////////////////////////////////////////
+        dialogTheme: ThemesData.dialogTheme(
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+        ),
+        ///////////////////////////////////////////////
       ),
       ////////////////////////////////////////////////////////////////////////////
       ////////////////////////////////////////////////////////////////////////////
@@ -112,6 +118,9 @@ class MyApp extends StatelessWidget {
         radioTheme: ThemesData.radioThemeData(),
         ///////////////////////////////////////////////
         iconTheme: ThemesData.iconThemeData(primaryColor),
+        ///////////////////////////////////////////////
+        dialogTheme: ThemesData.dialogTheme(),
+        ///////////////////////////////////////////////
       ),
       home: _homeScreen, //-> OnBoardingScreen() or TabsScreen()
     );

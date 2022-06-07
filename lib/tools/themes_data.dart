@@ -16,9 +16,8 @@ class ThemesData {
     return AppBarTheme(
       elevation: 5,
       backgroundColor: primaryColor,
-      foregroundColor: useWhiteForeground(primaryColor)
-          ? Colors.white
-          : Colors.black,
+      foregroundColor:
+          useWhiteForeground(primaryColor) ? Colors.white : Colors.black,
       titleTextStyle: TextStyle(
         fontSize: 21,
         fontWeight: FontWeight.bold,
@@ -76,5 +75,19 @@ class ThemesData {
   }
 
   ///////////////////////////////////////////////////////////////////
-
+  static DialogTheme dialogTheme({
+    Color backgroundColor = const Color.fromARGB(255, 29, 29, 29),
+    Color textColor = Colors.white,
+  }) {
+    return DialogTheme(
+      backgroundColor: backgroundColor,
+      titleTextStyle:
+          ThemesData.createTextStyle(18, FontWeight.bold, color: textColor),
+      contentTextStyle:
+          ThemesData.createTextStyle(16, FontWeight.w500, color: textColor),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+    );
+  }
 }

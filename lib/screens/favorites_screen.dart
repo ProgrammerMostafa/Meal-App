@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/meal.dart';
-import '../models/tools/themes_data.dart';
+import '../tools/themes_data.dart';
 import '../providers/meal_provider.dart';
 import '../widgets/meal_item.dart';
 

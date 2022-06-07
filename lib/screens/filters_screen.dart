@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/meal_provider.dart';
 import '../providers/theme_provider.dart';
+import '../screens/tabs_screen.dart';
 import '../widgets/main_drawer.dart';
 
 class FiltersScreen extends StatefulWidget {
@@ -22,72 +23,82 @@ class _FiltersScreenState extends State<FiltersScreen> {
     final Map<String, bool> filters =
         Provider.of<MealProvider>(context).saved_filters;
     ////////////////
-    return Scaffold(
-      //////////////////////
-      body: CustomScrollView(
-        slivers: [
-          if (widget._fromOnBoardingScreen == false)
-            const SliverAppBar(
-              pinned: true,
-              title: Text('Your Filters'),
-            ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                //////////////////////////////////////////
-                Container(
-                  padding: EdgeInsets.only(
-                    top: widget._fromOnBoardingScreen ? 65 : 15,
-                    bottom: 15.0,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Adjust your meal selection.',
-                      style: Theme.of(context).textTheme.headline3,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const TabsScreen(),
+          ),
+        );
+        return true;
+      },
+      child: Scaffold(
+        //////////////////////
+        body: CustomScrollView(
+          slivers: [
+            if (widget._fromOnBoardingScreen == false)
+              const SliverAppBar(
+                pinned: true,
+                title: Text('Your Filters'),
+              ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  //////////////////////////////////////////
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: widget._fromOnBoardingScreen ? 65 : 15,
+                      bottom: 15.0,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Adjust your meal selection.',
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
                     ),
                   ),
-                ),
-                ///////////////////////////////////////
-                switchListTile(
-                  context,
-                  'Gluten-Free',
-                  'Only include gluten-free meals',
-                  'gluten',
-                  filters,
-                ),
-                ///////////////////////////////////////
-                switchListTile(
-                  context,
-                  'Lactose-Free',
-                  'Only include lactose-free meals',
-                  'lactose',
-                  filters,
-                ),
-                ///////////////////////////////////////
-                switchListTile(
-                  context,
-                  'Vegetarian',
-                  'Only include vegetarian meals',
-                  'vegetarian',
-                  filters,
-                ),
-                ///////////////////////////////////////
-                switchListTile(
-                  context,
-                  'Vegan',
-                  'Only include vegan meals',
-                  'vegan',
-                  filters,
-                ),
-                ///////////////////////////////////////
-                if (widget._fromOnBoardingScreen) const SizedBox(height: 70),
-              ],
+                  ///////////////////////////////////////
+                  switchListTile(
+                    context,
+                    'Gluten-Free',
+                    'Only include gluten-free meals',
+                    'gluten',
+                    filters,
+                  ),
+                  ///////////////////////////////////////
+                  switchListTile(
+                    context,
+                    'Lactose-Free',
+                    'Only include lactose-free meals',
+                    'lactose',
+                    filters,
+                  ),
+                  ///////////////////////////////////////
+                  switchListTile(
+                    context,
+                    'Vegetarian',
+                    'Only include vegetarian meals',
+                    'vegetarian',
+                    filters,
+                  ),
+                  ///////////////////////////////////////
+                  switchListTile(
+                    context,
+                    'Vegan',
+                    'Only include vegan meals',
+                    'vegan',
+                    filters,
+                  ),
+                  ///////////////////////////////////////
+                  if (widget._fromOnBoardingScreen) const SizedBox(height: 70),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        ////////////////////
+        drawer: widget._fromOnBoardingScreen ? null : const MainDrawer(),
       ),
-      ////////////////////
-      drawer: widget._fromOnBoardingScreen ? null : const MainDrawer(),
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/tools/themes_data.dart';
+import '../tools/themes_data.dart';
 import '../providers/theme_provider.dart';
 import '../screens/filters_screen.dart';
 import '../screens/tabs_screen.dart';
